@@ -1,6 +1,6 @@
 ﻿namespace Library
 {
-    partial class Form1
+    partial class Main
     {
         /// <summary>
         ///  Required designer variable.
@@ -19,5 +19,10 @@
             }
             base.Dispose(disposing);
         }
+
+        private Button buttonBorrow;
+        private Button buttonBooks;
+        private Button buttonClients;
+        private Label label1;
     }
 }
