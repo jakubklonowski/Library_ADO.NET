@@ -75,7 +75,7 @@ namespace Library
             string connectionString = null;
 
             // Look for the name in the connectionStrings section.
-            ConnectionStringSettings settings = ConfigurationManager.ConnectionStrings["Name"];
+            ConnectionStringSettings settings = ConfigurationManager.ConnectionStrings["localmssql"];
 
             // If found, return the connection string.
             if (settings != null)
