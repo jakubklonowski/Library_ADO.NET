@@ -1,4 +1,5 @@
-﻿using System.Data;
+﻿using Library.models;
+using System.Data;
 using System.Data.SqlClient;
 
 namespace Library
@@ -15,7 +16,11 @@ namespace Library
         private void buttonAdd_Click(object sender, EventArgs e)
         {
             string clientName = textBoxClientName.Text;
-            addClient(clientName);
+            ClientRequest clientRequest = new()
+            {
+                Name = clientName
+            };
+            addClient(clientRequest);
             clearForms();
             fetchData();
         }
@@ -24,7 +29,12 @@ namespace Library
         {
             string clientId = comboBoxClientId.SelectedItem.ToString();
             string clientName = textBoxClientName.Text;
-            modifyClientData(clientId, clientName);
+            ClientModel client = new()
+            {
+                Id = clientId,
+                Name = clientName
+            };
+            modifyClientData(client);
             clearForms();
             fetchData();
         }
@@ -32,7 +42,11 @@ namespace Library
         private void buttonDelete_Click(object sender, EventArgs e)
         {
             string clientId = comboBoxClientId.SelectedItem.ToString();
-            deleteClient(clientId);
+            ClientResponse clientResponse = new()
+            {
+                Id = clientId
+            };
+            deleteClient(clientResponse);
             clearForms();
             fetchData();
         }
@@ -42,24 +56,29 @@ namespace Library
             // populates dataGridViewClients from database
             dataGridViewClients.DataSource = services.IClientService.getClientsData();
 
-            // populates comboBoxClientId from database
+            // clears & populates comboBoxClientId from database
             comboBoxClientId.Items.Clear();
-            comboBoxClientId.Items.Add(services.IClientService.getClientsId());
+            List<ClientResponse> list = services.IClientService.getClientsId();
+            foreach (ClientResponse item in list)
+            {
+                comboBoxClientId.Items.Add(item.Id.ToString());
+                Console.WriteLine(item.Id.ToString());
+            }
         }
 
-        private void addClient(string clientName)
+        private void addClient(ClientRequest clientRequest)
         {
-            services.IClientService.addClient(clientName);
+            services.IClientService.addClient(clientRequest);
         }
 
-        private void modifyClientData(string clientId, string clientName)
+        private void modifyClientData(ClientModel client)
         {
-            services.IClientService.modifyClient(clientId, clientName);
+            services.IClientService.modifyClient(client);
         }
 
-        private void deleteClient(string clientId)
+        private void deleteClient(ClientResponse clientResponse)
         {
-            services.IClientService.deleteClient(clientId);
+            services.IClientService.deleteClient(clientResponse);
         }
 
         private void clearForms()

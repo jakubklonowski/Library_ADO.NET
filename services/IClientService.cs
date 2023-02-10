@@ -6,6 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Configuration;
+using Library.models;
 
 namespace Library.services
 {
@@ -16,23 +17,23 @@ namespace Library.services
             return repositories.IClientRepository.getClientsData();
         }
 
-        public static List<string> getClientsId()
+        public static List<ClientResponse> getClientsId()
         {
             return repositories.IClientRepository.getClientsId();
         }
 
-        public static void addClient(string clientName)
+        public static void addClient(ClientRequest clientRequest)
         {
-            repositories.IClientRepository.addCLient(clientName);
+            repositories.IClientRepository.addClient(clientRequest);
         }
 
-        public static void modifyClient(string clientId, string clientName)
+        public static void modifyClient(ClientModel client)
         {
-            repositories.IClientRepository.modifyClient(clientId, clientName);
+            repositories.IClientRepository.modifyClient(client);
         }
 
-        public static void deleteClient(string idClient) {
-            repositories.IClientRepository.deleteClient(idClient);
+        public static void deleteClient(ClientResponse clientResponse) {
+            repositories.IClientRepository.deleteClient(clientResponse);
         }
     }
 }

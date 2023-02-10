@@ -5,6 +5,7 @@ using System.Data;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Library.models;
 
 namespace Library.repositories
 {
@@ -27,9 +28,9 @@ namespace Library.repositories
             }
         }
 
-        public static List<string> getClientsId()
+        public static List<ClientResponse> getClientsId()
         {
-            List<string> ids = new List<string>();
+            List<ClientResponse> ids = new();
             using (SqlConnection connection = new(connectionString))
             {
                 string queryClientsId = "SELECT ID FROM Client";
@@ -40,7 +41,11 @@ namespace Library.repositories
                     SqlDataReader readerClientId = commandClientsId.ExecuteReader();
                     while (readerClientId.Read())
                     {
-                        ids.Add(readerClientId.GetString(0));
+                        ClientResponse clientResponse = new()
+                        {
+                            Id = readerClientId[0].ToString()
+                        };
+                        ids.Add(clientResponse);
                     }
                 }
                 catch (Exception ex)
@@ -51,7 +56,7 @@ namespace Library.repositories
             return ids;
         }
 
-        public static void addCLient(string clientName)
+        public static void addClient(ClientRequest clientRequest)
         {
             using (SqlConnection connection = new(connectionString))
             {
@@ -60,7 +65,7 @@ namespace Library.repositories
                 SqlCommand commandInsert = new(queryInsert, connection);
                 try
                 {
-                    commandInsert.Parameters.Add("@name", SqlDbType.VarChar, 50).Value = clientName;
+                    commandInsert.Parameters.Add("@name", SqlDbType.VarChar, 50).Value = clientRequest.Name;
                     connection.Open();
                     commandInsert.ExecuteNonQuery();
                 }
@@ -71,7 +76,7 @@ namespace Library.repositories
             }
         }
 
-        public static void modifyClient(string clientId, string clientName)
+        public static void modifyClient(ClientModel client)
         {
             using (SqlConnection connection = new(connectionString))
             {
@@ -80,8 +85,8 @@ namespace Library.repositories
                 SqlCommand commandMod = new(queryMod, connection);
                 try
                 {
-                    commandMod.Parameters.Add("@id", SqlDbType.Int).Value = clientId;
-                    commandMod.Parameters.Add("@name", SqlDbType.VarChar, 50).Value = clientName;
+                    commandMod.Parameters.Add("@id", SqlDbType.Int).Value = client.Id;
+                    commandMod.Parameters.Add("@name", SqlDbType.VarChar, 50).Value = client.Name;
                     connection.Open();
                     commandMod.ExecuteNonQuery();
                 }
@@ -92,7 +97,7 @@ namespace Library.repositories
             }
         }
 
-        public static void deleteClient(string clientId)
+        public static void deleteClient(ClientResponse clientResponse)
         {
             using (SqlConnection connection = new(connectionString))
             {
@@ -101,7 +106,7 @@ namespace Library.repositories
                 SqlCommand commandDelete = new(queryDelete, connection);
                 try
                 {
-                    commandDelete.Parameters.Add("@id", SqlDbType.Int).Value = clientId;
+                    commandDelete.Parameters.Add("@id", SqlDbType.Int).Value = clientResponse.Id;
                     connection.Open();
                     commandDelete.ExecuteNonQuery();
                 }
