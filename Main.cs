@@ -69,38 +69,21 @@ namespace Library
 
         }
 
-        private static string GetConnectionString()
-        {
-            return "Data Source=DESKTOP-JH1VST5\\SQLEXPRESS;Initial Catalog=Library;User ID=sa;Password=papaja";
-            string connectionString = null;
-
-            // Look for the name in the connectionStrings section.
-            ConnectionStringSettings settings = ConfigurationManager.ConnectionStrings["localmssql"];
-
-            // If found, return the connection string.
-            if (settings != null)
-            {
-                connectionString = settings.ConnectionString;
-            }
-
-            return connectionString;
-        }
-
         private void buttonBorrow_Click(object sender, EventArgs e)
         {
-            Form formLibrary = new Library(GetConnectionString());
+            Form formLibrary = new Library();
             formLibrary.Show();
         }
 
         private void buttonBooks_Click(object sender, EventArgs e)
         {
-            Form formBooks = new Book(GetConnectionString());
+            Form formBooks = new Book();
             formBooks.Show();
         }
 
         private void buttonClients_Click(object sender, EventArgs e)
         {
-            Form formClients = new Client(GetConnectionString());
+            Form formClients = new Client();
             formClients.Show();
         }
     }

@@ -1,51 +1,21 @@
-﻿using System.Data;
+﻿using System;
+using System.Collections.Generic;
 using System.Data.SqlClient;
+using System.Data;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
 
-namespace Library
+namespace Library.repositories
 {
-    public partial class Client : Form
+    internal interface IClientRepository
     {
-        private string connectionString = "";
+        const string connectionString = "Data Source=DESKTOP-JH1VST5\\SQLEXPRESS;Initial Catalog=Library;User ID=sa;Password=papaja";
 
-        public Client(string connectionString)
-        {
-            InitializeComponent();
-
-            this.connectionString = connectionString;
-
-            fetchData(connectionString);
-        }
-
-        private void buttonAdd_Click(object sender, EventArgs e)
-        {
-            string clientName = textBoxClientName.Text;
-            addClient(clientName);
-            clearForms();
-            fetchData(connectionString);
-        }
-
-        private void buttonModify_Click(object sender, EventArgs e)
-        {
-            string clientId = comboBoxClientId.SelectedItem.ToString();
-            string clientName = textBoxClientName.Text;
-            modifyClientData(clientId, clientName);
-            clearForms();
-            fetchData(connectionString);
-        }
-
-        private void buttonDelete_Click(object sender, EventArgs e)
-        {
-            string clientId = comboBoxClientId.SelectedItem.ToString();
-            deleteClient(clientId);
-            clearForms();
-            fetchData(connectionString);
-        }
-
-        private void fetchData(string connectionString)
+        public static BindingSource getClientsData()
         {
             using (SqlConnection connection = new(connectionString))
             {
-                // populates dataGridViewClients from database
                 string queryClients = "SELECT ID, Name FROM Client";
                 SqlCommand commandGetClients = new(queryClients, connection);
                 SqlDataAdapter sqlDataAdapterClients = new(commandGetClients);
@@ -53,19 +23,24 @@ namespace Library
                 sqlDataAdapterClients.Fill(dataTableClients);
                 BindingSource bindingSourceClients = new();
                 bindingSourceClients.DataSource = dataTableClients;
-                dataGridViewClients.DataSource = bindingSourceClients;
+                return bindingSourceClients;
+            }
+        }
 
-                // populates comboBoxClientId from database
+        public static List<string> getClientsId()
+        {
+            List<string> ids = new List<string>();
+            using (SqlConnection connection = new(connectionString))
+            {
                 string queryClientsId = "SELECT ID FROM Client";
                 SqlCommand commandClientsId = new(queryClientsId, connection);
                 try
                 {
                     connection.Open();
                     SqlDataReader readerClientId = commandClientsId.ExecuteReader();
-                    comboBoxClientId.Items.Clear();
                     while (readerClientId.Read())
                     {
-                        comboBoxClientId.Items.Add(readerClientId[0]);
+                        ids.Add(readerClientId.GetString(0));
                     }
                 }
                 catch (Exception ex)
@@ -73,10 +48,10 @@ namespace Library
                     Console.WriteLine(ex.Message);
                 }
             }
+            return ids;
         }
 
-        // adds client to database
-        private void addClient(string clientName)
+        public static void addCLient(string clientName)
         {
             using (SqlConnection connection = new(connectionString))
             {
@@ -96,8 +71,7 @@ namespace Library
             }
         }
 
-        // modifies client record in database
-        private void modifyClientData(string clientId, string clientName)
+        public static void modifyClient(string clientId, string clientName)
         {
             using (SqlConnection connection = new(connectionString))
             {
@@ -118,8 +92,7 @@ namespace Library
             }
         }
 
-        // erases client data from database
-        private void deleteClient(string clientId)
+        public static void deleteClient(string clientId)
         {
             using (SqlConnection connection = new(connectionString))
             {
@@ -137,12 +110,6 @@ namespace Library
                     Console.WriteLine(ex.Message);
                 }
             }
-        }
-
-        private void clearForms()
-        {
-            comboBoxClientId.SelectedItem = null;
-            textBoxClientName.Clear();
         }
     }
 }
