@@ -9,7 +9,6 @@ namespace Library
         public Client()
         {
             InitializeComponent();
-
             fetchData();
         }
 
@@ -62,7 +61,6 @@ namespace Library
             foreach (ClientResponse item in list)
             {
                 comboBoxClientId.Items.Add(item.Id.ToString());
-                Console.WriteLine(item.Id.ToString());
             }
         }
 
