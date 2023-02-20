@@ -1,14 +1,17 @@
-﻿using System.Data.SqlClient;
-using System.Data;
-using Library.models;
+﻿using Library.models;
+using Library.repositories;
+using Library.services;
 
 namespace Library
 {
     public partial class Book : Form
     {
+        readonly BookService service;
+
         public Book()
         {
             InitializeComponent();
+            service = new BookService(new BookRepository("Data Source=DESKTOP-JH1VST5\\SQLEXPRESS;Initial Catalog=library;User Id=sa;Password=papaja"));
             fetchData();
         }
 
@@ -57,11 +60,11 @@ namespace Library
         private void fetchData()
         {
             // populates dataGridViewBooks from database
-            dataGridViewBooks.DataSource = services.IBookService.getBooksData();
+            dataGridViewBooks.DataSource = service.getBooksData();
 
             // clears & populates comboBoxId from database
             comboBoxId.Items.Clear();
-            List<BookResponse> list = services.IBookService.getBooksId();
+            List<BookResponse> list = service.getBooksId();
             foreach (BookResponse item in list)
             {
                 comboBoxId.Items.Add(item.Id.ToString());
@@ -70,17 +73,17 @@ namespace Library
 
         private void addBook(BookRequest bookRequest)
         {
-            services.IBookService.addBook(bookRequest);
+            service.addBook(bookRequest);
         }
 
         private void modifyBookData(BookModel book)
         {
-            services.IBookService.modifyBook(book);
+            service.modifyBook(book);
         }
 
         private void deleteBook(BookResponse bookResponse)
         {
-            services.IBookService.deleteBook(bookResponse);
+            service.deleteBook(bookResponse);
         }
 
         private void clearForms()

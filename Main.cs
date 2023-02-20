@@ -1,5 +1,3 @@
-using System.Configuration;
-
 namespace Library
 {
     public partial class Main : Form

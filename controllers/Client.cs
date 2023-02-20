@@ -1,14 +1,17 @@
 ﻿using Library.models;
-using System.Data;
-using System.Data.SqlClient;
+using Library.repositories;
+using Library.services;
 
 namespace Library
 {
     public partial class Client : Form
     {
+        readonly ClientService service;
+
         public Client()
         {
             InitializeComponent();
+            service = new ClientService(new ClientRepository("Data Source=DESKTOP-JH1VST5\\SQLEXPRESS;Initial Catalog=library;User Id=sa;Password=papaja"));
             fetchData();
         }
 
@@ -53,11 +56,11 @@ namespace Library
         private void fetchData()
         {
             // populates dataGridViewClients from database
-            dataGridViewClients.DataSource = services.IClientService.getClientsData();
+            dataGridViewClients.DataSource = service.getClientsData();
 
             // clears & populates comboBoxClientId from database
             comboBoxClientId.Items.Clear();
-            List<ClientResponse> list = services.IClientService.getClientsId();
+            List<ClientResponse> list = service.getClientsId();
             foreach (ClientResponse item in list)
             {
                 comboBoxClientId.Items.Add(item.Id.ToString());
@@ -66,17 +69,17 @@ namespace Library
 
         private void addClient(ClientRequest clientRequest)
         {
-            services.IClientService.addClient(clientRequest);
+            service.addClient(clientRequest);
         }
 
         private void modifyClientData(ClientModel client)
         {
-            services.IClientService.modifyClient(client);
+            service.modifyClient(client);
         }
 
         private void deleteClient(ClientResponse clientResponse)
         {
-            services.IClientService.deleteClient(clientResponse);
+            service.deleteClient(clientResponse);
         }
 
         private void clearForms()

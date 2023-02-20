@@ -1,5 +1,3 @@
-using System.Configuration;
-
 namespace Library
 {
     internal static class Program
