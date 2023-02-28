@@ -1,5 +1,4 @@
 ﻿using Library.models;
-using Library.repositories;
 using Library.services;
 
 namespace Library
@@ -11,7 +10,7 @@ namespace Library
         public Book()
         {
             InitializeComponent();
-            service = new BookService(new BookRepository("Data Source=DESKTOP-JH1VST5\\SQLEXPRESS;Initial Catalog=library;User Id=sa;Password=papaja"));
+            service = new(new("Data Source=DESKTOP-JH1VST5\\SQLEXPRESS;Initial Catalog=library;User Id=sa;Password=papaja"));
             fetchData();
         }
 

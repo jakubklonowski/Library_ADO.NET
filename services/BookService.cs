@@ -1,5 +1,6 @@
 ﻿using Library.models;
 using Library.repositories;
+using Library.services.validators;
 
 namespace Library.services
 {
@@ -14,27 +15,97 @@ namespace Library.services
 
         public BindingSource getBooksData()
         {
-            return _repository.getBooksData();
+            BindingSource bsource = new();
+            try
+            {
+                bsource = _repository.getBooksData();
+
+                if (bsource.Count == 0)
+                {
+                    MessageBox.Show("No results!");
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+            }
+            return bsource;
         }
 
         public List<BookResponse> getBooksId()
         {
-            return _repository.getBooksId();
+            List<BookResponse> list = new();
+            try
+            {
+                list = _repository.getBooksId();
+                if (list.Count == 0)
+                {
+                    MessageBox.Show("No results!");
+                }
+                return list;
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+            }
+            return list;
         }
 
         public void addBook(BookRequest bookRequest)
         {
-            _repository.addBook(bookRequest);
+            try
+            {
+                string name = bookRequest.Name;
+                string author = bookRequest.Author;
+
+                Validators.StringShortOrNull(5, name, author);
+
+                _repository.addBook(bookRequest);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+            }
         }
 
         public void modifyBook(BookModel book)
         {
-            _repository.modifyBook(book);
+            try
+            {
+                string id = book.Id;
+                string name = book.Name;
+                string author = book.Author;
+
+                Validators.StringShortOrNull(5, name, author);
+                Validators.StringShortOrNull(1, id);
+                Validators.Atoi(id);
+                int.TryParse(id, out int intid);
+                Validators.IsNaturalNumber(intid);
+
+                _repository.modifyBook(book);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+            }
         }
 
         public void deleteBook(BookResponse bookResponse)
         {
-            _repository.deleteBook(bookResponse);
+            try
+            {
+                string id = bookResponse.Id;
+
+                Validators.Atoi(id);
+                int.TryParse(id, out int intid);
+                Validators.IsNaturalNumber(intid);
+
+                _repository.deleteBook(bookResponse);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+            }
         }
     }
 }

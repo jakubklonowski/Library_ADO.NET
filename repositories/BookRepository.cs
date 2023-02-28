@@ -34,22 +34,15 @@ namespace Library.repositories
             using SqlConnection connection = new(_connectionString);
             string queryBooksId = "SELECT ID FROM Book";
             SqlCommand commandBooksId = new(queryBooksId, connection);
-            try
+            connection.Open();
+            SqlDataReader readerBookId = commandBooksId.ExecuteReader();
+            while (readerBookId.Read())
             {
-                connection.Open();
-                SqlDataReader readerBookId = commandBooksId.ExecuteReader();
-                while (readerBookId.Read())
+                BookResponse bookResponse = new()
                 {
-                    BookResponse bookResponse = new()
-                    {
-                        Id = readerBookId[0].ToString()
-                    };
-                    ids.Add(bookResponse);
-                }
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine(ex.Message);
+                    Id = readerBookId[0].ToString()
+                };
+                ids.Add(bookResponse);
             }
 
             return ids;
@@ -60,17 +53,10 @@ namespace Library.repositories
             using SqlConnection connection = new(_connectionString);
             string queryInsert = "INSERT INTO Book (Name, Author) VALUES (@name, @author)";
             SqlCommand commandInsert = new(queryInsert, connection);
-            try
-            {
-                commandInsert.Parameters.Add("@name", SqlDbType.VarChar, 50).Value = bookRequest.Name;
-                commandInsert.Parameters.Add("@author", SqlDbType.VarChar, 50).Value = bookRequest.Author;
-                connection.Open();
-                commandInsert.ExecuteNonQuery();
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine(ex.Message);
-            }
+            commandInsert.Parameters.Add("@name", SqlDbType.VarChar, 50).Value = bookRequest.Name;
+            commandInsert.Parameters.Add("@author", SqlDbType.VarChar, 50).Value = bookRequest.Author;
+            connection.Open();
+            commandInsert.ExecuteNonQuery();
         }
 
         public void modifyBook(BookModel book)
@@ -78,18 +64,11 @@ namespace Library.repositories
             using SqlConnection connection = new(_connectionString);
             string queryMod = "UPDATE Book SET Name=@name, Author=@author WHERE ID = @id";
             SqlCommand commandMod = new(queryMod, connection);
-            try
-            {
-                commandMod.Parameters.Add("@id", SqlDbType.Int).Value = book.Id;
-                commandMod.Parameters.Add("@name", SqlDbType.VarChar, 50).Value = book.Name;
-                commandMod.Parameters.Add("@author", SqlDbType.VarChar, 50).Value = book.Author;
-                connection.Open();
-                commandMod.ExecuteNonQuery();
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine(ex.Message);
-            }
+            commandMod.Parameters.Add("@id", SqlDbType.Int).Value = book.Id;
+            commandMod.Parameters.Add("@name", SqlDbType.VarChar, 50).Value = book.Name;
+            commandMod.Parameters.Add("@author", SqlDbType.VarChar, 50).Value = book.Author;
+            connection.Open();
+            commandMod.ExecuteNonQuery();
         }
 
         public void deleteBook(BookResponse bookResponse)
@@ -97,17 +76,9 @@ namespace Library.repositories
             using SqlConnection connection = new(_connectionString);
             string queryDelete = "DELETE FROM Book WHERE ID = @id";
             SqlCommand commandDelete = new(queryDelete, connection);
-            try
-            {
-                commandDelete.Parameters.Add("@id", SqlDbType.Int).Value = bookResponse.Id;
-                connection.Open();
-                commandDelete.ExecuteNonQuery();
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine(ex.Message);
-
-            }
+            commandDelete.Parameters.Add("@id", SqlDbType.Int).Value = bookResponse.Id;
+            connection.Open();
+            commandDelete.ExecuteNonQuery();
         }
     }
 }

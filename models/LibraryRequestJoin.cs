@@ -3,7 +3,7 @@
     public class LibraryRequestJoin
     {
         public LibraryRequest Library { get; set; }
-        public Book Book { get; set; }
-        public Client Client { get; set; }
+        public BookModel Book { get; set; }
+        public ClientModel Client { get; set; }
     }
 }

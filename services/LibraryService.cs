@@ -1,5 +1,6 @@
 ﻿using Library.models;
 using Library.repositories;
+using Library.services.validators;
 
 namespace Library.services
 {
@@ -14,26 +15,94 @@ namespace Library.services
 
         public BindingSource getLibraryData()
         {
-            return _repository.getBorrowedBooks();
+            BindingSource bsource = new();
+            try
+            {
+                bsource = _repository.getBorrowedBooks();
+                if (bsource == null || bsource.Count == 0)
+                {
+                    MessageBox.Show("No results!");
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+            }
+            return bsource;
         }
 
-        public List<LibraryResponse> getBorrowedBookId()
+        public BindingSource getLibraryDataExtra()
         {
-            return _repository.getBorrowedBooksId();
+            BindingSource bsource = new();
+            try
+            {
+                bsource = _repository.getBorrowedBooksExtra();
+                if (bsource == null || bsource.Count == 0)
+                {
+                    MessageBox.Show("No results!");
+                }
+            }
+            catch(Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+            }
+            return bsource;
         }
 
         public void addBorrow(LibraryRequestJoin libraryRequestJoin)
         {
-            _repository.addBorrow(libraryRequestJoin);
+            try
+            {
+                string date = libraryRequestJoin.Library.Date;
+                bool active = libraryRequestJoin.Library.Active;
+                string idbook = libraryRequestJoin.Book.Id;
+                string idclient = libraryRequestJoin.Client.Id;
+
+                Validators.StringShortOrNull(1, active.ToString(), idbook, idclient);
+                Validators.StringShortOrNull(5, date);
+                Validators.Atoi(idbook, idclient);
+
+                _repository.addBorrow(libraryRequestJoin);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+            }
         }
 
         public void modifyBorrow(LibraryModelJoin libraryModelJoin)
         {
-            _repository.modifyBorrow(libraryModelJoin);
+            try
+            {
+                string id = libraryModelJoin.Library.Id;
+                string date = libraryModelJoin.Library.Date;
+                bool active = libraryModelJoin.Library.Active;
+                string idbook = libraryModelJoin.Book.Id;
+                string idclient = libraryModelJoin.Client.Id;
+
+                Validators.StringShortOrNull(1, id, active.ToString(), idbook, idclient);
+                Validators.StringShortOrNull(5, date);
+                Validators.Atoi(id, idbook, idclient);
+                int.TryParse(id, out int intid);
+                Validators.IsNaturalNumber(intid);
+
+                _repository.modifyBorrow(libraryModelJoin);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+            }
         }
 
         public void deleteBorrow(LibraryResponse libraryResponse)
         {
+            string id = libraryResponse.Id;
+
+            Validators.StringShortOrNull(1, id);
+            Validators.Atoi(id);
+            int.TryParse(id, out int intid);
+            Validators.IsNaturalNumber(intid);
+
             _repository.deleteBorrow(libraryResponse);
         }
     }
